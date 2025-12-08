@@ -1,0 +1,114 @@
+{
+  "game": [
+    {
+      "move": 1,
+      "white": "e2-e4",
+      "black": "e7-e5"
+    },
+    {
+      "move": 2,
+      "white": "Ng1-f3",
+      "black": "Nb8-c6"
+    },
+    {
+      "move": 3,
+      "white": "Bf1-c4",
+      "black": "Bf8-c5"
+    },
+    {
+      "move": 4,
+      "white": "c2-c3",
+      "black": "Ng8-f6"
+    },
+    {
+      "move": 5,
+      "white": "d2-d4",
+      "black": "e5xd4"
+    },
+    {
+      "move": 6,
+      "white": "c3xd4",
+      "black": "Bc5-b4+"
+    },
+    {
+      "move": 7,
+      "white": "Nb1-c3",
+      "black": "Nf6xe4"
+    },
+    {
+      "move": 8,
+      "white": "O-O",
+      "black": "Bb4xc3"
+    },
+    {
+      "move": 9,
+      "white": "d4-d5",
+      "black": "Bc3xb2"
+    },
+    {
+      "move": 10,
+      "white": "Bc1xb2",
+      "black": "Nc6-e7"
+    },
+    {
+      "move": 11,
+      "white": "Qd1-a4",
+      "black": "d7-d6"
+    },
+    {
+      "move": 12,
+      "white": "Rf1-e1",
+      "black": "Ne4-f6"
+    },
+    {
+      "move": 13,
+      "white": "Nf3-d4",
+      "black": "O-O"
+    },
+    {
+      "move": 14,
+      "white": "Bb2-f6",
+      "black": "g7xf6"
+    },
+    {
+      "move": 15,
+      "white": "Qa4-c6",
+      "black": "Ne7-g6"
+    },
+    {
+      "move": 16,
+      "white": "Nd4-f5",
+      "black": "Bc8xf5"
+    },
+    {
+      "move": 17,
+      "white": "Qc6xb7",
+      "black": "Rf8-e8"
+    },
+    {
+      "move": 18,
+      "white": "Qb7xa8",
+      "black": "Qd8-d7"
+    },
+    {
+      "move": 19,
+      "white": "Qa8-a5",
+      "black": "Re8xe1+"
+    },
+    {
+      "move": 20,
+      "white": "Ra1xe1",
+      "black": "Qd7-g4"
+    },
+    {
+      "move": 21,
+      "white": "Qa5-f5",
+      "black": "Qg4xf5"
+    },
+    {
+      "move": 22,
+      "white": "Bc4xf7+",
+      "black": "Kg8-f8"
+    }
+  ]
+}

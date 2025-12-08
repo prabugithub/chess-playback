@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Notation to JSON Converter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 32px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 32px;
+        }
+
+        .converter-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .panel {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #e5e7eb;
+        }
+
+        .panel h2 {
+            margin-bottom: 16px;
+            color: #333;
+            font-size: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 400px;
+            padding: 16px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+            resize: vertical;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: white;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary { background: #667eea; }
+        .btn-success { background: #10b981; }
+        .btn-danger { background: #ef4444; }
+        .btn-secondary { background: #6b7280; }
+
+        .format-guide {
+            background: #fff7ed;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #fb923c;
+            margin-bottom: 24px;
+        }
+
+        .format-guide h3 {
+            color: #ea580c;
+            margin-bottom: 12px;
+        }
+
+        .format-examples {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .example {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+
+        .example strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .status {
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 12px;
+            display: none;
+        }
+
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 2px solid #10b981;
+        }
+
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 2px solid #ef4444;
+        }
+
+        @media (max-width: 768px) {
+            .converter-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>♟️ Chess Notation to JSON Converter</h1>
+        <p class="subtitle">Convert your chess moves to JSON format for the Chess Playback Viewer</p>
+
+        <div class="format-guide">
+            <h3>📝 Supported Input Formats</h3>
+            <div class="format-examples">
+                <div class="example">
+                    <strong>Simple Format:</strong>
+                    1. e4 e5<br>
+                    2. Nf3 Nc6<br>
+                    3. Bb5 a6
+                </div>
+                <div class="example">
+                    <strong>Extended Format:</strong>
+                    1. e2-e4 e7-e5<br>
+                    2. Ng1-f3 Nb8-c6<br>
+                    3. Bf1-b5 a7-a6
+                </div>
+                <div class="example">
+                    <strong>With Captures:</strong>
+                    1. e4 e5<br>
+                    2. Nf3 exd4<br>
+                    3. Nxd4 Nc6
+                </div>
+            </div>
+        </div>
+
+        <div class="converter-grid">
+            <div class="panel">
+                <h2>Input Chess Moves</h2>
+                <textarea id="inputText" placeholder="Paste your chess moves here...
+
+Examples:
+1. e4 e5
+2. Nf3 Nc6
+3. Bb5 a6
+
+OR
+
+1. e2-e4 e7-e5
+2. Ng1-f3 Nb8-c6
+
+OR
+
+1. d4 d5
+2. c4 e5
+3. Nf3 exd4"></textarea>
+                
+                <div class="button-group">
+                    <button onclick="convertToJSON()" class="btn-primary">Convert to JSON →</button>
+                    <button onclick="clearInput()" class="btn-danger">Clear</button>
+                    <button onclick="loadSample()" class="btn-secondary">Load Sample</button>
+                </div>
+            </div>
+
+            <div class="panel">
+                <h2>JSON Output</h2>
+                <textarea id="outputJSON" placeholder="JSON output will appear here..." readonly></textarea>
+                
+                <div class="button-group">
+                    <button onclick="copyJSON()" class="btn-success">📋 Copy JSON</button>
+                    <button onclick="downloadJSON()" class="btn-success">💾 Download JSON</button>
+                    <button onclick="validateJSON()" class="btn-primary">✓ Validate</button>
+                </div>
+                
+                <div id="status" class="status"></div>
+            </div>
+        </div>
+
+        <div class="format-guide" style="background: #f0f9ff; border-color: #3b82f6;">
+            <h3 style="color: #1d4ed8;">💡 Tips</h3>
+            <ul style="margin-left: 20px; color: #1e40af;">
+                <li>You can paste moves with or without full notation (e4 or e2-e4)</li>
+                <li>Captures can be written as 'x' or 'X' (exd4 or e5xd4)</li>
+                <li>Castling: O-O (kingside) or O-O-O (queenside)</li>
+                <li>Check (+) and checkmate (#) symbols are supported</li>
+                <li>Each move should be on a new line or separated by move numbers</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Starting positions for each piece type
+        const startingPositions = {
+            // Pawns
+            'P': { 'a': 'a2', 'b': 'b2', 'c': 'c2', 'd': 'd2', 'e': 'e2', 'f': 'f2', 'g': 'g2', 'h': 'h2' },
+            'p': { 'a': 'a7', 'b': 'b7', 'c': 'c7', 'd': 'd7', 'e': 'e7', 'f': 'f7', 'g': 'g7', 'h': 'h7' },
+            // Rooks
+            'R': ['a1', 'h1'],
+            'r': ['a8', 'h8'],
+            // Knights
+            'N': ['b1', 'g1'],
+            'n': ['b8', 'g8'],
+            // Bishops
+            'B': ['c1', 'f1'],
+            'b': ['c8', 'f8'],
+            // Queens
+            'Q': ['d1'],
+            'q': ['d8'],
+            // Kings
+            'K': ['e1'],
+            'k': ['e8']
+        };
+
+        function expandMove(move, isWhite) {
+            // If already in full notation, return as-is
+            if (/[a-h][1-8][-x][a-h][1-8]/.test(move)) {
+                return move;
+            }
+
+            // Handle castling
+            if (move === 'O-O' || move === '0-0' || move === 'O-O-O' || move === '0-0-0') {
+                return move;
+            }
+
+            // Remove check/checkmate symbols
+            move = move.replace(/[+#]/, '');
+
+            // Detect piece type
+            let piece = '';
+            if (/^[KQRBN]/.test(move)) {
+                piece = move[0];
+                move = move.slice(1);
+            } else {
+                piece = isWhite ? 'P' : 'p';
+            }
+
+            // Extract destination
+            const destMatch = move.match(/[a-h][1-8]$/);
+            if (!destMatch) return move;
+            const dest = destMatch[0];
+
+            // Determine source
+            let source;
+            if (piece === 'P' || piece === 'p') {
+                const file = dest[0];
+                const isCapture = move.includes('x');
+                
+                if (isCapture && move.length > 2) {
+                    // Capture with file specified (e.g., exd4)
+                    const fromFile = move[0];
+                    source = startingPositions[piece][fromFile];
+                } else {
+                    source = startingPositions[piece][file];
+                }
+            } else {
+                // For pieces, use first available starting position
+                source = startingPositions[piece][0];
+            }
+
+            // Build full notation
+            const separator = move.includes('x') ? 'x' : '-';
+            return `${source}${separator}${dest}`;
+        }
+
+        function convertToJSON() {
+            const input = document.getElementById('inputText').value;
+            const status = document.getElementById('status');
+            
+            if (!input.trim()) {
+                showStatus('Please enter some chess moves', 'error');
+                return;
+            }
+
+            try {
+                // Parse the input
+                const lines = input.split('\n').filter(line => line.trim());
+                const moves = [];
+                let moveNumber = 1;
+
+                for (let line of lines) {
+                    // Remove move numbers and clean up
+                    line = line.replace(/^\d+\.?\s*/, '').trim();
+                    
+                    if (!line) continue;
+
+                    // Split into white and black moves
+                    const parts = line.split(/\s+/).filter(p => p && p !== '...');
+                    
+                    if (parts.length >= 2) {
+                        const whiteMove = expandMove(parts[0], true);
+                        const blackMove = expandMove(parts[1], false);
+                        
+                        moves.push({
+                            move: moveNumber,
+                            white: whiteMove,
+                            black: blackMove
+                        });
+                        moveNumber++;
+                    } else if (parts.length === 1) {
+                        // Only white move (incomplete game)
+                        const whiteMove = expandMove(parts[0], true);
+                        moves.push({
+                            move: moveNumber,
+                            white: whiteMove,
+                            black: ""
+                        });
+                        moveNumber++;
+                    }
+                }
+
+                // Generate JSON
+                const jsonOutput = {
+                    game: moves
+                };
+
+                const formattedJSON = JSON.stringify(jsonOutput, null, 2);
+                document.getElementById('outputJSON').value = formattedJSON;
+                showStatus('✓ Successfully converted to JSON!', 'success');
+
+            } catch (error) {
+                showStatus('Error converting moves: ' + error.message, 'error');
+            }
+        }
+
+        function copyJSON() {
+            const output = document.getElementById('outputJSON');
+            
+            if (!output.value) {
+                showStatus('No JSON to copy. Convert some moves first!', 'error');
+                return;
+            }
+
+            output.select();
+            document.execCommand('copy');
+            showStatus('✓ JSON copied to clipboard!', 'success');
+        }
+
+        function downloadJSON() {
+            const output = document.getElementById('outputJSON').value;
+            
+            if (!output) {
+                showStatus('No JSON to download. Convert some moves first!', 'error');
+                return;
+            }
+
+            const blob = new Blob([output], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'chess-game.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showStatus('✓ JSON file downloaded!', 'success');
+        }
+
+        function validateJSON() {
+            const output = document.getElementById('outputJSON').value;
+            
+            if (!output) {
+                showStatus('No JSON to validate. Convert some moves first!', 'error');
+                return;
+            }
+
+            try {
+                const data = JSON.parse(output);
+                
+                if (!data.game || !Array.isArray(data.game)) {
+                    throw new Error('Invalid format: missing "game" array');
+                }
+
+                if (data.game.length === 0) {
+                    throw new Error('Game array is empty');
+                }
+
+                for (let i = 0; i < data.game.length; i++) {
+                    const move = data.game[i];
+                    if (!move.move || !move.white) {
+                        throw new Error(`Invalid move at index ${i}`);
+                    }
+                }
+
+                showStatus(`✓ Valid JSON! ${data.game.length} moves found.`, 'success');
+            } catch (error) {
+                showStatus('Invalid JSON: ' + error.message, 'error');
+            }
+        }
+
+        function clearInput() {
+            document.getElementById('inputText').value = '';
+            document.getElementById('outputJSON').value = '';
+            hideStatus();
+        }
+
+        function loadSample() {
+            const sample = `1. d4 d5
+2. c4 e5
+3. Nf3 exd4
+4. Qxd4 dxc4
+5. Qxc4 Nc6
+6. e3 Nf6
+7. Qa4 Bd7
+8. Nc3 Bc5
+9. Qc2 O-O
+10. Bd3 Nb4`;
+
+            document.getElementById('inputText').value = sample;
+            convertToJSON();
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = 'status ' + type;
+            status.style.display = 'block';
+        }
+
+        function hideStatus() {
+            document.getElementById('status').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
