@@ -565,6 +565,7 @@
             <div class="tab-buttons">
                 <button class="tab-button active" onclick="switchTab('upload')">Upload JSON</button>
                 <button class="tab-button" onclick="switchTab('paste')">Paste JSON</button>
+                <button class="tab-button" onclick="switchTab('create')">Create Moves</button>
                 <button class="tab-button" onclick="switchTab('sample')">Load Sample</button>
             </div>
 
@@ -584,6 +585,18 @@
 }'></textarea>
                     <button onclick="loadFromJSON()" class="btn-primary" style="margin-top: 12px;">Load Game from JSON</button>
                 </div>
+            </div>
+
+            <div id="create-tab" class="tab-content">
+                <p style="margin-bottom: 12px; color: #666; font-size: 14px; line-height: 1.5;">
+                    Don't have a JSON file? Use our converter to create one from chess notation!
+                </p>
+                <button onclick="window.open('json-converter.html', '_blank')" class="btn-success" style="width: 100%;">
+                    📝 Open Move Converter (New Tab)
+                </button>
+                <p style="margin-top: 12px; font-size: 13px; color: #666; line-height: 1.4;">
+                    After creating your JSON, return here and use "Paste JSON" tab
+                </p>
             </div>
 
             <div id="sample-tab" class="tab-content">
