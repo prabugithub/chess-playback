@@ -51,6 +51,7 @@
             border-radius: 4px;
             overflow: hidden;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            position: relative;
         }
 
         .board-row {
@@ -65,6 +66,33 @@
             justify-content: center;
             font-size: 28px;
             transition: background-color 0.3s;
+            position: relative;
+        }
+
+        .coordinate {
+            position: absolute;
+            font-size: 9px;
+            font-weight: bold;
+            color: rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+        }
+
+        .square.light .coordinate {
+            color: rgba(139, 69, 19, 0.6);
+        }
+
+        .square.dark .coordinate {
+            color: rgba(245, 222, 179, 0.7);
+        }
+
+        .file-label {
+            bottom: 2px;
+            right: 3px;
+        }
+
+        .rank-label {
+            top: 2px;
+            left: 3px;
         }
 
         .square.light { background-color: #f0d9b5; }
@@ -363,6 +391,10 @@
                 font-size: 36px;
             }
 
+            .coordinate {
+                font-size: 10px;
+            }
+
             .chess-board {
                 border: 3px solid #333;
                 border-radius: 6px;
@@ -436,6 +468,10 @@
                 width: 60px;
                 height: 60px;
                 font-size: 40px;
+            }
+
+            .coordinate {
+                font-size: 11px;
             }
 
             .chess-board {
@@ -932,11 +968,14 @@
         function renderBoard() {
             const boardElement = document.getElementById('chessBoard');
             boardElement.innerHTML = '';
-            
+
+            const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+            const ranks = ['8', '7', '6', '5', '4', '3', '2', '1'];
+
             currentBoard.forEach((row, i) => {
                 const rowDiv = document.createElement('div');
                 rowDiv.className = 'board-row';
-                
+
                 row.forEach((piece, j) => {
                     const squareDiv = document.createElement('div');
                     const isLight = (i + j) % 2 === 0;
@@ -944,13 +983,29 @@
                         (lastMove.from[0] === i && lastMove.from[1] === j) ||
                         (lastMove.to[0] === i && lastMove.to[1] === j)
                     );
-                    
+
                     squareDiv.className = `square ${isLight ? 'light' : 'dark'} ${isHighlight ? 'highlight' : ''}`;
                     squareDiv.textContent = piece !== '.' ? pieceSymbols[piece] : '';
-                    
+
+                    // Add file label (a-h) on the bottom row
+                    if (i === 7) {
+                        const fileLabel = document.createElement('span');
+                        fileLabel.className = 'coordinate file-label';
+                        fileLabel.textContent = files[j];
+                        squareDiv.appendChild(fileLabel);
+                    }
+
+                    // Add rank label (1-8) on the first column
+                    if (j === 0) {
+                        const rankLabel = document.createElement('span');
+                        rankLabel.className = 'coordinate rank-label';
+                        rankLabel.textContent = ranks[i];
+                        squareDiv.appendChild(rankLabel);
+                    }
+
                     rowDiv.appendChild(squareDiv);
                 });
-                
+
                 boardElement.appendChild(rowDiv);
             });
         }
