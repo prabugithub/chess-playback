@@ -729,9 +729,35 @@
             currentBoard = initialBoard.map(row => [...row]);
             renderBoard();
             updateControls();
-            
+
             // Check for shared game in URL
             loadFromURL();
+
+            // Check for game from converter (localStorage)
+            checkPendingGame();
+
+            // Listen for messages from converter window
+            window.addEventListener('message', (event) => {
+                if (event.origin !== window.location.origin) return;
+
+                if (event.data.type === 'LOAD_GAME' && event.data.gameData) {
+                    loadGame(event.data.gameData);
+                }
+            });
+        }
+
+        // Check for pending game from converter
+        function checkPendingGame() {
+            const pendingGame = localStorage.getItem('pendingGame');
+            if (pendingGame) {
+                try {
+                    const data = JSON.parse(pendingGame);
+                    loadGame(data);
+                    localStorage.removeItem('pendingGame');
+                } catch (error) {
+                    console.error('Error loading pending game:', error);
+                }
+            }
         }
 
         // Tab switching

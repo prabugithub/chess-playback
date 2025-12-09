@@ -381,7 +381,8 @@ OR
                 <div class="button-group">
                     <button onclick="copyJSON()" class="btn-success">📋 Copy JSON</button>
                     <button onclick="downloadJSON()" class="btn-success">💾 Download JSON</button>
-                    <button onclick="validateJSON()" class="btn-primary">✓ Validate</button>
+                    <button onclick="loadGameDirectly()" class="btn-primary" id="loadGameBtn">▶️ Load Game</button>
+                    <button onclick="validateJSON()" class="btn-secondary">✓ Validate</button>
                 </div>
                 
                 <div id="status" class="status"></div>
@@ -475,15 +476,25 @@ OR
         }
 
         function convertToJSON() {
-            const input = document.getElementById('inputText').value;
+            let input = document.getElementById('inputText').value;
             const status = document.getElementById('status');
-            
+
             if (!input.trim()) {
                 showStatus('Please enter some chess moves', 'error');
                 return;
             }
 
             try {
+                // Normalize input: convert to lowercase except for piece notation (K, Q, R, B, N)
+                // This allows users to type in any case
+                input = input.replace(/([a-z])/gi, (match) => {
+                    // Keep piece letters uppercase, everything else lowercase
+                    if (/[KQRBN]/.test(match.toUpperCase())) {
+                        return match.toUpperCase();
+                    }
+                    return match.toLowerCase();
+                });
+
                 // Parse the input
                 const lines = input.split('\n').filter(line => line.trim());
                 const moves = [];
@@ -631,6 +642,49 @@ OR
 
         function hideStatus() {
             document.getElementById('status').style.display = 'none';
+        }
+
+        // Load game directly into the viewer
+        function loadGameDirectly() {
+            const output = document.getElementById('outputJSON').value;
+
+            if (!output) {
+                showStatus('No JSON to load. Convert some moves first!', 'error');
+                return;
+            }
+
+            try {
+                // Validate JSON first
+                const data = JSON.parse(output);
+
+                if (!data.game || !Array.isArray(data.game)) {
+                    throw new Error('Invalid format: missing "game" array');
+                }
+
+                if (data.game.length === 0) {
+                    throw new Error('Game array is empty');
+                }
+
+                // Store in localStorage so index.html can access it
+                localStorage.setItem('pendingGame', output);
+
+                // Check if we're in the same window (opened via window.open)
+                if (window.opener && !window.opener.closed) {
+                    // Send data to parent window
+                    window.opener.postMessage({
+                        type: 'LOAD_GAME',
+                        gameData: data
+                    }, window.location.origin);
+
+                    showStatus('✓ Game sent to viewer! You can close this tab.', 'success');
+                } else {
+                    // Open index.html with the game data
+                    window.location.href = 'index.html';
+                }
+
+            } catch (error) {
+                showStatus('Invalid JSON: ' + error.message, 'error');
+            }
         }
     </script>
 </body>

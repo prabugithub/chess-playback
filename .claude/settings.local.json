@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nAdd TinyURL short link generation for easier sharing\n\n- Added \"Create Short Link\" button alongside existing share options\n- Integrates TinyURL API to shorten long game URLs\n- Maintains original long link functionality for reliability\n- Shows loading state and helpful status messages\n- Perfect for WhatsApp sharing where long URLs are messy\n\nFeatures:\n- Detects if link is already short to avoid redundant calls\n- Error handling with fallback to long link if API fails\n- Mobile-friendly button layout using existing button-group\n- Clear user feedback during link creation\n\nUser flow:\n1. Generate share link (creates long URL with game data)\n2. Click \"Create Short Link\" to get shortened version\n3. Copy and share via WhatsApp easily\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git commit -m \"$(cat <<''EOF''\nAdd auto-lowercase conversion and direct game loading from converter\n\nJSON Converter improvements:\n- Auto-normalize input: converts uppercase to lowercase while preserving\n  piece notation (K, Q, R, B, N remain uppercase)\n- Users can now type \"1. E4 E5\" and it converts to \"1. e4 e5\"\n- Added \"Load Game\" button to directly load generated JSON into viewer\n- No more copy/paste needed - seamless workflow\n\nIndex.html improvements:\n- Added localStorage support to receive games from converter\n- Added postMessage listener for cross-window communication\n- Automatically loads game when returning from converter\n- Checks for pending game on page load\n\nUser flow improvements:\n1. Type moves in ANY case (e.g., \"E4\", \"e4\", \"NF3\", \"nf3\")\n2. Click \"Convert to JSON\"\n3. Click \"Load Game\" - automatically opens viewer with game loaded\n4. Start playing back immediately!\n\nBenefits:\n- More forgiving input (case-insensitive)\n- Eliminates manual copy/paste step\n- Faster workflow from conversion to playback\n- Better user experience for non-technical users\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n)\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
